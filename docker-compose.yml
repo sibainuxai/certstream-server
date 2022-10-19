@@ -1,0 +1,24 @@
+version: '3.1'
+services:
+  https-portal:
+    image: steveltn/https-portal:1.22.1
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      DOMAINS: >-
+        [your domain] -> http://certstream-server:4000,
+      #STAGE: 'production' # Don't use production until staging works
+      WORKER_PROCESSES: auto
+      WORKER_CONNECTIONS: 1024
+      CLIENT_MAX_BODY_SIZE: '36M'
+      WEBSOCKET: "true"
+    links:
+      - certstream-server
+    volumes:
+      - ./certs:/var/lib/https-portal
+    restart: always
+  certstream-server:
+    build: ./
+    ports: 
+      - 21080:4000
